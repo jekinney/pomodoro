@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use App\Models\PomodoroSession;
+use App\Http\Resources\PomodoroSessionResponse;
 use App\Http\Requests\StorePomodoroSessionRequest;
 use App\Http\Requests\UpdatePomodoroSessionRequest;
-use App\Models\PomodoroSession;
+use App\Models\PomodoroHistory;
 
 class PomodoroSessionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, PomodoroSession $pomodoroSession)
     {
-        //
+        return PomodoroSessionResponse::collection($pomodoroSession->getList($request));
     }
 
     /**
@@ -27,9 +30,16 @@ class PomodoroSessionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePomodoroSessionRequest $request)
+    public function store(StorePomodoroSessionRequest $request, PomodoroSession $session)
     {
-        //
+        $session = $session->create([
+            'user_id' => $request->user()->id,
+            'work_time' => $request->work_time,
+            'break_time' => $request->break_time,
+            'pomodoro_id' => $request->pomodoro_id,
+        ]);
+
+        return new PomodoroSessionResponse($session);
     }
 
     /**
@@ -37,7 +47,7 @@ class PomodoroSessionController extends Controller
      */
     public function show(PomodoroSession $pomodoroSession)
     {
-        //
+        return new PomodoroSessionResponse($pomodoroSession);
     }
 
     /**
@@ -53,7 +63,12 @@ class PomodoroSessionController extends Controller
      */
     public function update(UpdatePomodoroSessionRequest $request, PomodoroSession $pomodoroSession)
     {
-        //
+        $pomodoroSession->update([
+            'work_time' => $request->work_time,
+            'break_time' => $request->break_time,
+        ]);
+
+        return new PomodoroSessionResponse($pomodoroSession->fresh());
     }
 
     /**
@@ -61,6 +76,15 @@ class PomodoroSessionController extends Controller
      */
     public function destroy(PomodoroSession $pomodoroSession)
     {
-        //
+        $sessionId = $pomodoroSession->id;
+
+        if ( $pomodoroSession->delete() ) {
+            // Remove any history too.
+            PomodoroHistory::where('session_id', $sessionId)->delete();
+
+            return response()->json(200, ['success' => 'Session and any historical sessions have been removed.']);
+        }
+
+        return abort(500, 'Unable to remove the session');
     }
 }

@@ -75,6 +75,9 @@ class PomodoroController extends Controller
      */
     public function destroy(Pomodoro $pomodoro)
     {
+        $pomodoro->history()->delete();
+        $pomodoro->sessions()->delete();
+
         if ( $pomodoro->delete() ) {
             return response()->json(['success' => 'Pomodoro has been removed']);
         }
