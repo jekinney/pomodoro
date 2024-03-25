@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Pomodoro;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PomodoroResponse;
 use App\Http\Requests\StorePomodoroRequest;
 use App\Http\Requests\UpdatePomodoroRequest;
-use App\Http\Resources\PomodoroResponse;
 
 class PomodoroController extends Controller
 {
@@ -15,7 +16,15 @@ class PomodoroController extends Controller
      */
     public function index(Request $request, Pomodoro $pomodoro)
     {
-        return PomodoroResponse::collection($pomodoro->listOfAll($request));
+        // With the request object you could do sorting and searching as needed.
+        $user = $request->user()->load('teams');
+
+        $list = $pomodoro->load('sessions')
+        ->where('user_id', $user->id)
+        ->orWhereIn('team_id', $user->teams->select('id')->all())
+        ->get();
+
+        return PomodoroResponse::collection($list);
     }
 
     /**
@@ -46,7 +55,7 @@ class PomodoroController extends Controller
      */
     public function show(Pomodoro $pomodoro)
     {
-        return new PomodoroResponse($pomodoro);
+        return new PomodoroResponse($pomodoro->load('sessions'));
     }
 
     /**
@@ -67,7 +76,7 @@ class PomodoroController extends Controller
             'display_name' => $request->display_name,
         ]);
 
-        return new PomodoroResponse($pomodoro->fresh());
+        return new PomodoroResponse($pomodoro->fresh()->load('sessions'));
     }
 
     /**

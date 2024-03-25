@@ -39,34 +39,14 @@ class Pomodoro extends Model
         return $this->hasMany(Team::class);
     }
 
-    /**
-     * Update an existing resource
-     *
-     * @param  UpdatePomodoroRequest $request
-     * @return Model
-     */
-    public function renew(UpdatePomodoroRequest $request): Model
+    public function sessions(): HasMany
     {
-        $this->update([
-            'description' => $request->description,
-            'display_name' => $request->display_name,
-        ]);
-
-        return $this->fresh();
+        return $this->hasMany(PomodoroSession::class, 'pomodoro_id', 'id');
     }
 
-    /**
-     * Attempt to remove a resource
-     *
-     * @return void
-     */
-    public function remove()
+    public function history(): HasMany
     {
-        if ( $this->has('sessions') ) return abort(422, 'Pomodoro has sessions still attached');
-        if ( $this->delete() ) {
-            return true;
-        }
-        abort(500, 'Unable to remove Pomodoro');
+        return $this->hasMany(PomodoroSession::class, 'pomodoro_id', 'id');
     }
 
     /**
@@ -81,7 +61,8 @@ class Pomodoro extends Model
         // With the request object you could do sorting and searching as needed.
         $user = $request->user()->load('teams');
 
-        return $this->where('user_id', $user->id)
+        return $this->load('sessions')
+        ->where('user_id', $user->id)
         ->orWhereIn('team_id', $user->teams->select('id')->all())
         ->get();
     }

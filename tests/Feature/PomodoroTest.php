@@ -25,7 +25,8 @@ class PomodoroTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        $this->actingAs($user)->getJson('/api/v1/pomodoro')
+        $this->actingAs($user)
+        ->getJson('/api/v1/pomodoro')
         ->assertStatus(200)
         ->assertJsonCount(10);
     }
@@ -46,7 +47,8 @@ class PomodoroTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        $this->actingAs($user)->getJson('/api/v1/pomodoro')
+        $this->actingAs($user)
+        ->getJson('/api/v1/pomodoro')
         ->assertStatus(200)
         ->assertJsonCount(10);
     }
@@ -72,7 +74,8 @@ class PomodoroTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        $this->actingAs($user)->getJson('/api/v1/pomodoro')
+        $this->actingAs($user)
+        ->getJson('/api/v1/pomodoro')
         ->assertStatus(200)
         ->assertJsonCount(20);
     }
@@ -88,7 +91,8 @@ class PomodoroTest extends TestCase
 
         $user->teams()->attach($team);
 
-        $this->actingAs($user)->postJson('/api/v1/pomodoro', [
+        $this->actingAs($user)
+        ->postJson('/api/v1/pomodoro', [
             'display_name' => 'test',
             'description' => 'Test Description'
         ])->assertStatus(201);
@@ -117,7 +121,8 @@ class PomodoroTest extends TestCase
             'description' => 'created description'
         ]);
 
-        $this->actingAs($user)->patchJson('/api/v1/pomodoro/'.$pom->id, [
+        $this->actingAs($user)
+        ->patchJson('/api/v1/pomodoro/'.$pom->id, [
             'display_name' => 'test',
             'description' => 'Test Description'
         ])->assertStatus(200);
@@ -144,7 +149,8 @@ class PomodoroTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $this->actingAs($user)->deleteJson('/api/v1/pomodoro/'.$pom->id)
+        $this->actingAs($user)
+        ->deleteJson('/api/v1/pomodoro/'.$pom->id)
         ->assertStatus(200);
 
         $this->assertDatabaseCount('pomodoros', 0);

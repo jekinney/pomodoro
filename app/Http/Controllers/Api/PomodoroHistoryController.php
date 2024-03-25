@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\PomodoroHistory;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\PomodoroHistoryResponse;
 use App\Http\Requests\StorePomodoroHistoryRequest;
 use App\Http\Requests\UpdatePomodoroHistoryRequest;
