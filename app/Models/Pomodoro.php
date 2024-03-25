@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use LDAP\Result;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
-use App\Http\Requests\StorePomodoroRequest;
-use App\Http\Requests\UpdatePomodoroRequest;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pomodoro extends Model
@@ -39,31 +36,35 @@ class Pomodoro extends Model
         return $this->hasMany(Team::class);
     }
 
+    /**
+     * Relationship to the Pomodoro History model
+     *
+     * @return HasMany
+     */
+    public function history(): HasMany
+    {
+        return $this->hasMany(PomodoroHistory::class, 'pomodoro_id', 'id');
+    }
+
+    /**
+     * Relationship to the Pomodoro Session model
+     *
+     * @return HasMany
+     */
     public function sessions(): HasMany
     {
         return $this->hasMany(PomodoroSession::class, 'pomodoro_id', 'id');
     }
 
-    public function history(): HasMany
-    {
-        return $this->hasMany(PomodoroSession::class, 'pomodoro_id', 'id');
-    }
-
     /**
-     * List of a auth user's personal
-     * and associated teams pomodoros
+     * Get the attributes that should be cast.
      *
-     * @param Request $request
-     * @return void
+     * @return array<string, string>
      */
-    public function listOfAll(Request $request): Collection
+    protected function casts(): array
     {
-        // With the request object you could do sorting and searching as needed.
-        $user = $request->user()->load('teams');
-
-        return $this->load('sessions')
-        ->where('user_id', $user->id)
-        ->orWhereIn('team_id', $user->teams->select('id')->all())
-        ->get();
+        return [
+            'created_at' => 'datetime:m-d-Y',
+        ];
     }
 }

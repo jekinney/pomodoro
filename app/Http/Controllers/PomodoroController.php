@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePomodoroRequest;
 use App\Models\Pomodoro;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\PomodoroResponse;
-use App\Http\Requests\StorePomodoroRequest;
-use App\Http\Requests\UpdatePomodoroRequest;
 
 class PomodoroController extends Controller
 {
@@ -16,15 +13,16 @@ class PomodoroController extends Controller
      */
     public function index(Request $request, Pomodoro $pomodoro)
     {
-        // With the request object you could do sorting and searching as needed.
         $user = $request->user()->load('teams');
 
-        $list = $pomodoro->with('sessions')
+        $list = $pomodoro->withCount('sessions', 'history')
         ->where('user_id', $user->id)
         ->orWhereIn('team_id', $user->teams->select('id')->all())
         ->get();
 
-        return PomodoroResponse::collection($list);
+        return inertia()->render('Pomodoro/Index', [
+            'pomodoros' => $list
+        ]);
     }
 
     /**
@@ -32,7 +30,9 @@ class PomodoroController extends Controller
      */
     public function create()
     {
-        //
+        return inertia()->render('Pomodoro/Create', [
+            'teams' => auth()->user()->teams,
+        ]);
     }
 
     /**
@@ -40,14 +40,14 @@ class PomodoroController extends Controller
      */
     public function store(StorePomodoroRequest $request, Pomodoro $pomodoro)
     {
-        $pom = $pomodoro->create([
+        $pomodoro = $pomodoro->create([
             'user_id' => $request->user()->id,
             'team_id' => $request->team_id?? null,
             'description' => $request->description,
             'display_name' => $request->display_name,
         ]);
 
-        return new PomodoroResponse($pom);
+        return redirect()->route('pomodoro.show', $pomodoro);
     }
 
     /**
@@ -55,7 +55,9 @@ class PomodoroController extends Controller
      */
     public function show(Pomodoro $pomodoro)
     {
-        return new PomodoroResponse($pomodoro->load('sessions'));
+        return inertia()->render('Pomodoro/Show', [
+            'pomodoro' => $pomodoro->loadCount('sessions', 'history')
+        ]);
     }
 
     /**
@@ -63,20 +65,22 @@ class PomodoroController extends Controller
      */
     public function edit(Pomodoro $pomodoro)
     {
-        //
+        return inertia()->render('Pomodoro/Edit', [
+            'pomodoro' => $pomodoro
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePomodoroRequest $request, Pomodoro $pomodoro)
+    public function update(Request $request, Pomodoro $pomodoro)
     {
         $pomodoro->update([
             'description' => $request->description,
             'display_name' => $request->display_name,
         ]);
 
-        return new PomodoroResponse($pomodoro->fresh()->load('sessions'));
+        return redirect()->route('pomodoro.show', $pomodoro->fresh());
     }
 
     /**
@@ -86,10 +90,8 @@ class PomodoroController extends Controller
     {
         $pomodoro->history()->delete();
         $pomodoro->sessions()->delete();
+        $pomodoro->delete();
 
-        if ( $pomodoro->delete() ) {
-            return response()->json(['success' => 'Pomodoro has been removed']);
-        }
-        return abort(500, 'Unable to remove Pomodoro');
+        return redirect()->route('pomodoro.index');
     }
 }

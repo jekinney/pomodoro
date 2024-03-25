@@ -31,7 +31,8 @@ As this is a test for a job opportunity and as such is a MVP product. Here is a 
 - Better security with api keys
 - Clean up controllers as now they are "fat" and the models are "skinny"
 - Better test coverage even though there are PHPunit feature tests.
-- Better queries and more refined for performance and security
+- Better queries, moved to domain layer instead of controllers (repeated right now for UI and API) and more refined for performance and security (to much data, limited filtering)
+- UI improvements and security
 - Documentation (Almost none right now)
   
 ## Install Instructions
