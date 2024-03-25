@@ -1,3 +1,5 @@
+# Pomodoro Test Application for Rebuy
+
 ## Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
@@ -12,23 +14,33 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Packages Used
+## Packages and Software Used
 
+- [Local environment is Docker, WSL2 and using Laravel Sail](https://laravel.com/docs/11.x/installation#sail-on-windows)
 - [Laravel Jetstream Inertia with Teams](https://jetstream.laravel.com/introduction.html)
+- [Laravel Pulse for server information](https://laravel.com/docs/11.x/pulse)
+- [Laravel Reverb for Websocket server](https://laravel.com/docs/11.x/reverb)
+- [Postman for API calls](https://www.postman.com/)
+- [Postman Workspace with endpoints](undefined/workspace/pomodoro-test/collection/594104-ad936617-5368-4337-b106-ce1635a387ee?action=share&creator=594104)
 
+## Security Concerns and suggested updates
 
+As this is a test for a job opportunity and as such is a MVP product. Here is a list of bullet point for discussion
 
-## Security Concerns
+- Web hooks ofr api web socket broadcasting
+- Better security with api keys
+- Clean up controllers as now they are "fat" and the models are "skinny"
+- Better test coverage even though there are PHPunit feature tests.
+- Better queries and more refined for performance and security
+- Documentation (Almost none right now)
+  
+## Install Instructions
 
-As this is a test for a job opportunity and as such is a MVP product. 
+Created locally using Laravel Sail on a Windows 11 machine with WSL2 (Ubuntu 20.04 LTS) [Sail](https://laravel.com/docs/11.x/installation#sail-on-windows).
 
-- Using the Jetstream default views to register an account and able to get a token for api requests. Might have better options such as secret and public keys, etc.
-- Team access (ACL) should be more specific with finer control of access. Right now there are possible loop holes with team members having to much access. Possible use of a role and permissions ACL.
-- Use UUID's instead of the default integer as primary keys. Using an integer can help people guess and hit your security harder to find loop holes for access
-
-## Updates and refactor suggestions
-
-1. This was built using TDD but coverage is limited and not all scenarios are covered. This could lead to inaccurate positive test. If using this could I would strongly suggest verify test coverage to meet your requirements and expectations.
-2. I would also create a more robust UI to cover all the api endpoints and a web based ui so users won't need to use the API endpoints. 
-3. Add in better security with some of the suggestions above.
-4. Scheduling features for recurring meetings such as once a week for 3 months, every weekday, etc. 
+1. Clone repo locally and cd into the directory 'pomodoro'. 
+2. Run ```sail up -d``` this will take a few minutes as it download the required docker packages and sets up your environment
+3. Once everything is "started" open your browser and register an account. After you see the dashboard you can click by your avatar in the upper right. You will see a drop down and click API
+4. Create your api key and give it all the crud permissions
+5. Using Postman and the workspace linked above, set up an environment with the APi token as a variable
+6. Using that environment and the workspace linked above you will be able to use the api endpoints

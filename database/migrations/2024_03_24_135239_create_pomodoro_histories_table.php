@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pomodoro_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->comment('User who started the session');
+            $table->foreignId('session_id')->constrained(table: 'pomodoro_sessions');
             $table->foreignId('pomodoro_id')->constrained();
             $table->unsignedInteger('loops')->comment('How many times the session should repeat on a loop');
             $table->unsignedInteger('completed_loops')->comment('How many times the session actually looped');

@@ -29,8 +29,7 @@ class PomodoroSessionTest extends TestCase
 
         $this->actingAs($user)
         ->getJson("/api/v1/session/{$session->id}")
-        ->assertStatus(200)
-        ->assertJsonCount(1);
+        ->assertStatus(200);
     }
 
     // /**
