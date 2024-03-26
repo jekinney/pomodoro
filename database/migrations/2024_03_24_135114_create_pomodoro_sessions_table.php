@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->comment('User who created the session');
             $table->foreignId('pomodoro_id')->constrained();
+            $table->string('display_name');
             $table->unsignedInteger('loops')->default(1)->comment('How many times the session should repeat on a loop');
             $table->unsignedBigInteger('work_time');
             $table->unsignedBigInteger('break_time');

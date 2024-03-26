@@ -21,6 +21,13 @@ class Pomodoro extends Model
     protected $guarded = ['id'];
 
     /**
+     * Eager load count of relationships
+     *
+     * @var array
+     */
+    protected $withCount = ['sessions', 'history'];
+
+    /**
      * Relationship to User model.
      */
     public function users(): HasMany

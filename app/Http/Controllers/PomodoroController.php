@@ -56,7 +56,7 @@ class PomodoroController extends Controller
     public function show(Pomodoro $pomodoro)
     {
         return inertia()->render('Pomodoro/Show', [
-            'pomodoro' => $pomodoro->loadCount('sessions', 'history')
+            'pomodoro' => $pomodoro->load('sessions')
         ]);
     }
 

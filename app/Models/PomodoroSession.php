@@ -19,6 +19,23 @@ class PomodoroSession extends Model
     protected $guarded = ['id'];
 
     /**
+     * Eager load count of relationships
+     *
+     * @var array
+     */
+    protected $withCount = ['history'];
+
+    /**
+     * Relationship to the User model
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Relationship to the Pomodoro model
      *
      * @return BelongsTo
@@ -36,5 +53,17 @@ class PomodoroSession extends Model
     public function history(): HasMany
     {
         return $this->hasMany(PomodoroHistory::class, 'session_id', 'id');
+    }
+
+     /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime:m-d-Y',
+        ];
     }
 }

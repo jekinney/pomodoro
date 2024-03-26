@@ -23,10 +23,10 @@ class StorePomodoroSessionRequest extends FormRequest
     {
         return [
             'loops' => 'nullable|integer',
-            'user_id' => 'required|exists:users,id',
-            'pomodoro_id' => 'required|exists:pomodoros,id',
             'work_time' => 'required|integer',
             'break_time' => 'required|integer',
+            'pomodoro_id' => 'required|exists:pomodoros,id',
+            'display_name' => 'required|string',
         ];
     }
 }

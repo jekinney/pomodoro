@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\PomodoroController;
+use App\Http\Controllers\PomodoroHistoryController;
 use App\Http\Controllers\PomodoroSessionController;
 
 Route::get('/', function () {
@@ -30,9 +31,14 @@ Route::middleware(['auth:sanctum',config('jetstream.auth_session')])->group(func
 
     Route::get('/session', [PomodoroSessionController::class, 'index'])->name('session.index');
     Route::get('/session/create/{pomodoro}', [PomodoroSessionController::class, 'create'])->name('session.create');
-    Route::get('/session/show/{pomodoroSession}', [PomodoroSessionController::class, 'show'])->name('session.show');
-    Route::get('/session/edit/{pomodoroSession}', [PomodoroSessionController::class, 'edit'])->name('session.edit');
-    Route::post('/session/{pomodoro}', [PomodoroSessionController::class, 'store'])->name('session.store');
+    Route::get('/session/show/{id}', [PomodoroSessionController::class, 'show'])->name('session.show');
+    Route::get('/session/edit/{pomodoro_session}', [PomodoroSessionController::class, 'edit'])->name('session.edit');
+    Route::post('/session', [PomodoroSessionController::class, 'store'])->name('session.store');
+    Route::post('/session/start/{session}', [PomodoroSessionController::class, 'start'])->name('session.start');
+    Route::post('/session/end/{session}', [PomodoroSessionController::class, 'end'])->name('session.end');
     Route::patch('/session/{pomodoro}', [PomodoroSessionController::class, 'update'])->name('session.update');
     Route::delete('/session/{pomodoro}', [PomodoroSessionController::class, 'destroy'])->name('session.destroy');
+
+    Route::get('/history/show/{pomodoroHistory}', [PomodoroHistoryController::class, 'show'])->name('history.show');
+    Route::delete('/history/{pomodoroHistory}', [PomodoroHistoryController::class, 'destroy'])->name('history.destroy');
 });
