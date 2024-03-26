@@ -11,7 +11,7 @@ class StorePomodoroSessionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class StorePomodoroSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'loops' => 'nullable|integer',
+            'user_id' => 'required|exists:users,id',
+            'pomodoro_id' => 'required|exists:pomodoros,id',
+            'work_time' => 'required|integer',
+            'break_time' => 'required|integer',
         ];
     }
 }

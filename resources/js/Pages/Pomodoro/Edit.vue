@@ -1,7 +1,9 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { onMounted } from "vue";
+
+const page = usePage();
 
 defineProps({ pomodoros: Object });
 
@@ -12,14 +14,14 @@ const form = useForm({
 });
 
 onMounted(() => {
-    form.display_name = props.pomodoro.display_name;
-    form.description = props.pomodoro.description;
+    form.display_name = page.props.pomodoro.display_name;
+    form.description = page.props.pomodoro.description;
 });
 
 const submit = () => {
-    form.post(route('pomodoro.update'), {
+    form.post(route('pomodoro.update', page.props.pomodoro.id), {
         preserveScroll: true
-    })
+    });
 }
 </script>
 
@@ -34,7 +36,7 @@ const submit = () => {
         <div class="py-12">
             <div class="max-w-xl mx-auto sm:px-10 lg:px-6">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <form @submit.prevent="submit()" class="mt- space-y-6 m-4">
+                    <form @submit.prevent="submit()" class="space-y-6 m-4">
 
                         <div>
                             <label for="display_name" class="text-sm font-medium text-gray-900">Name</label>
